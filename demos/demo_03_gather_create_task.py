@@ -27,7 +27,7 @@ async def order(name: str, seconds: float, tag: str) -> str:
 
 
 async def main():
-    start = asyncio.get_event_loop().time()
+    start = asyncio.get_running_loop().time()
 
     # ---- 方式 1：gather 一把梭 ----
     print("===== A) asyncio.gather：同时开做，全部完成后统一拿结果 =====")
@@ -39,20 +39,19 @@ async def main():
     results = await asyncio.gather(*dishes)
     for r in results:
         print(r)
-    print(f"    gather 总耗时：{asyncio.get_event_loop().time() - start:.2f}s（≈ 最慢那道菜，而非累加！）\n")
+    print(f"    gather 总耗时：{asyncio.get_running_loop().time() - start:.2f}s（≈ 最慢那道菜，而非累加！）\n")
 
     # ---- 方式 2：create_task 边做边等 ----
-    start = asyncio.get_event_loop().time()
+    start = asyncio.get_running_loop().time()
     print("===== B) create_task：启动后台任务，主协程手里继续忙别的 =====")
     t1 = asyncio.create_task(cook("蒜蓉虾", 1.5, "X"))
     t2 = asyncio.create_task(cook("椒盐蟹", 2.0, "Y"))
-    print("    后台已在做两道菜，主协程先打印点东西：")
     await asyncio.sleep(0.3)
+    print("    后台已在做两道菜，主协程先打印点东西：")
     print("    主协程：擦桌子、摆碗筷...")
     # 最后等所有 task 结束（create_task 不会自动等待，必须 await）
     await asyncio.gather(t1, t2)
-    print(f"    create_task 总耗时：{asyncio.get_event_loop().time() - start:.2f}s")
-
+    print(f"    create_task 总耗时：{asyncio.get_running_loop().time() - start:.2f}s")
     print("\n核心理解：总耗时 = 最慢任务的耗时，而不是所有任务耗时之和。")
 
 

@@ -16,6 +16,7 @@ def cook(name: str, seconds: float) -> str:
 
 def main():
     print("===== 同步做三宫格 3 道菜，串行执行 =====")
+    # 记录程序开始执行的精确时间，用于计算后续总耗时
     start = time.perf_counter()
 
     # 必须一个一个来：前一个 sleep 完，才轮到下一个

@@ -10,6 +10,8 @@
     —— 这正好引出 demo_03 的并发工具。
 """
 import asyncio
+import time
+
 
 
 async def cook(name: str, seconds: float, tag: str) -> str:
@@ -21,14 +23,14 @@ async def cook(name: str, seconds: float, tag: str) -> str:
 
 async def main():
     print("===== demo_02：最朴素的 async 写法（尚未并发） =====")
-    start = asyncio.get_event_loop().time()
+    start = asyncio.get_running_loop().time()
 
     # 这样写：依然串行！await 一个，等完再 await 下一个
     r1 = await cook("西红柿", 1.0, "A")
     r2 = await cook("土豆", 2.0, "B")
     r3 = await cook("牛肉", 3.0, "C")
 
-    elapsed = asyncio.get_event_loop().time() - start
+    elapsed = asyncio.get_running_loop().time() - start
     print("\n结果：")
     print(r1); print(r2); print(r3)
     print(f"\n总耗时：{elapsed:.2f}s")
@@ -38,3 +40,28 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())  # asyncio.run 是启动事件循环的入口
+
+
+
+# import asyncio
+# import time
+
+# async def demonstrate_time_basis():
+#     loop = asyncio.get_running_loop()
+    
+#     # 事件循环内部时钟
+#     loop_start = loop.time()
+    
+#     # 系统性能计数器
+#     perf_start = time.perf_counter()
+    
+#     await asyncio.sleep(1)
+    
+#     loop_elapsed = loop.time() - loop_start
+#     perf_elapsed = time.perf_counter() - perf_start
+    
+#     print(f"事件循环时钟: {loop_elapsed:.6f} 秒")
+#     print(f"perf_counter: {perf_elapsed:.6f} 秒")
+#     print(f"差异: {abs(loop_elapsed - perf_elapsed):.6f} 秒")
+
+# asyncio.run(demonstrate_time_basis())
