@@ -35,24 +35,44 @@ def sync_requests_all() -> list[tuple[int, str]]:
             out.append((r.status_code, u))
         return out
 
+async def test_sync():
+    async with httpx.AsyncClient() as client:
+        t1 = asyncio.create_task(client.get(URLS[0]))
+        t2 = asyncio.create_task(client.get(URLS[1]))
+        t3 = asyncio.create_task(client.get(URLS[2]))
+        t4 = asyncio.create_task(client.get(URLS[3]))
+        results = await asyncio.gather(t1, t2, t3, t4)
+        return results
+        
+
 
 async def main():
     print("===== demo_04：真实 IO —— 同步 vs 异步并发 =====")
 
-    # 同步版
+    # # 同步版
+    # t0 = time.perf_counter()
+    # sync_results = sync_requests_all()
+    # t_sync = time.perf_counter() - t0
+    # print(f"  同步 httpx     : {t_sync:.2f}s   结果数={len(sync_results)}")
+    # for r in sync_results:
+    #     print(r)
+    
+    # # 异步版
+    # t0 = time.perf_counter()
+    # async_results = await async_requests_all()
+    # t_async = time.perf_counter() - t0
+    # print(f"  异步 httpx     : {t_async:.2f}s   结果数={len(async_results)}")
+
+    # # print(f"\n  加速比 ≈ {t_sync / t_async:.1f}x  （请求越多、延迟越高，收益越大）")
+    # print("  原因：等待 IO 返回的空档期，CPU 没闲着，而是去处理其它协程。")
+
+    # 测试同步版
     t0 = time.perf_counter()
-    sync_results = sync_requests_all()
+    sync_results = await test_sync()
     t_sync = time.perf_counter() - t0
-    print(f"  同步 httpx     : {t_sync:.2f}s   结果数={len(sync_results)}")
-
-    # 异步版
-    t0 = time.perf_counter()
-    async_results = await async_requests_all()
-    t_async = time.perf_counter() - t0
-    print(f"  异步 httpx     : {t_async:.2f}s   结果数={len(async_results)}")
-
-    print(f"\n  加速比 ≈ {t_sync / t_async:.1f}x  （请求越多、延迟越高，收益越大）")
-    print("  原因：等待 IO 返回的空档期，CPU 没闲着，而是去处理其它协程。")
+    print(f"  测试同步 httpx     : {t_sync:.2f}s   结果数={len(sync_results)}")
+    for r in sync_results:
+        print(r)
 
 
 if __name__ == "__main__":
