@@ -35,7 +35,7 @@ async def page_fetcher(pages: int):
     """每个 page 之间会 await，从第 1 页吐到第 pages 页。"""
     for i in range(1, pages + 1):
         await asyncio.sleep(0.1)                       # 模拟网络往返
-        yield f"<log-page-{i}> ...".join([""])         # yield 一页数据
+        yield f"<log-page-{i}> ..."                    # yield 一页数据
 
 
 async def main():
