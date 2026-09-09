@@ -25,7 +25,7 @@ class AutoCook:
         self.seconds = seconds
 
     def __await__(self):
-        # __await__ 必须返回一个迭代器；括号调用 async 函数得到协程，协程就是迭代器
+        # 协程需要调用自己的 .__await__() 才会被包装成符合要求的迭代器。
         return self._run().__await__()
 
     async def _run(self) -> str:
